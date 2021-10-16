@@ -34,6 +34,11 @@ Update VolcanoProject.dbo.Volcanoes
 SET Status = REPLACE(Status, 'Unknown', 'Uncertain')
 ;
 
+--Standardize Type values
+Update VolcanoProject.dbo.Volcanoes
+SET Type = REPLACE(Status, '?', '')
+;
+
 --Standardize Last Known Eruption values
 Update VolcanoProject.dbo.Volcanoes
 SET [Last Known Eruption] = 
