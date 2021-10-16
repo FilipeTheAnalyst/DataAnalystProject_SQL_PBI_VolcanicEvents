@@ -36,8 +36,24 @@ SET Status = REPLACE(Status, 'Unknown', 'Uncertain')
 
 --Standardize Type values
 Update VolcanoProject.dbo.Volcanoes
-SET Type = REPLACE(Status, '?', '')
+SET Type = REPLACE(Type, '?', '')
 ;
+
+--Standardize Type Categories
+Update VolcanoProject.dbo.Volcanoes
+SET Type = 
+	(Case 
+		When Type like '%cones' THEN REPLACE(Type, 'cones', 'cone')
+		When Type like '%vents' THEN REPLACE(Type, 'vents', 'vent')
+		When Type like '%domes' THEN REPLACE(Type, 'domes', 'dome')
+		When Type like '%Maars' THEN REPLACE(Type, 'Maars', 'Maar')
+		When Type like '%volcanoes' THEN REPLACE(Type, 'volcanoes', 'volcano')
+		When Type like '%volcano(es)' THEN REPLACE(Type, 'volcano(es)', 'volcano')
+	ELSE Type
+	END)
+FROM VolcanoProject.dbo.Volcanoes
+;
+
 
 --Standardize Last Known Eruption values
 Update VolcanoProject.dbo.Volcanoes
@@ -81,26 +97,22 @@ WITH CTE_VolcanoEvents as
       ,[Latitude]
       ,[Longitude]
       ,[Elevation (m)]
-      ,[Type]
+      ,Case
+			When Type like '%volcanoes' THEN REPLACE(Type, 'volcanoes', 'volcano')
+			ELSE Type
+		END AS Type
       ,[VEI] as 'Volcanic Explosivity Index (VEI)'
 	  ,Case
-			When VEI = 0 THEN 'Non-Explosive'
-			When VEI = 1 THEN 'Small'
-			When VEI = 2 THEN 'Moderate'
-			When VEI = 3 THEN 'Moderate-Large'
-			When VEI = 4 THEN 'Large'
-			When VEI >= 5 THEN 'Very Large'
-			ELSE 'Unknown'
-		END AS 'VEI General Description' -- General description for visualization purposes
-		,Case
 			When VEI = 0 THEN 'Gentle'
 			When VEI = 1 THEN 'Effusive'
-			When VEI IN (2, 3, 4) THEN 'Explosive'
-			When VEI = 5 THEN 'Cataclysmic'
-			When VEI = 6 THEN 'Paroxysmal'
-			When VEI >= 7 THEN 'Colossal'
+			When VEI = 2 THEN 'Explosive'
+			When VEI = 3 THEN 'Catastrophic'
+			When VEI = 4 THEN 'Cataclysmic'
+			When VEI = 5 THEN 'Paroxysmic'
+			When VEI = 6 THEN 'Colossal'
+			When VEI = 7 THEN 'Super-colossal'
 			ELSE 'Unknown'
-		END AS 'VEI Qualitative Description' -- Qualitative description for visualization purposes
+		END AS 'Volcanic Explosivity Index (VEI) Description' -- VEI description for visualization purposes
       ,[Agent] AS 'Agent Fatalities Code'
 	  ,Case
 			When LEN(Agent) - LEN(REPLACE(Agent, ',', '')) = 0 THEN Agent
@@ -155,9 +167,9 @@ WITH CTE_VolcanoEvents as
 	  ,Case
 			When [Damage Description] = 0 THEN '0'
 			When [Damage Description] = 1 THEN 'Less than $1 million'
-			When [Damage Description] = 2 THEN '~$1 to $5 million'
-			When [Damage Description] = 3 THEN '~$5 to $25 million'
-			When [Damage Description] = 4 THEN '~$25 million or more'
+			When [Damage Description] = 2 THEN '$1 to $5 million'
+			When [Damage Description] = 3 THEN '$5 to $25 million'
+			When [Damage Description] = 4 THEN '$25 million or more'
 			ELSE 'Unknown'
 		END AS 'Damage ($Mil) from Eruption' --Number of Damage ($Mil) from Eruption categorized for visualization purposes
       ,[Houses Destroyed]
@@ -283,5 +295,21 @@ SELECT *
 			When [Agent 4] = 'W' THEN 'Waves/Tsunami'
 			ELSE NULL
 		END AS 'Agent Fatality 4' --Agent that caused Fatalities categorized for visualization purposes
-FROM CTE_VolcanoEvents
+FROM CTE_VolcanoEvents;
 ```
+
+## Data Model
+The queries from the previous section were loaded into Power BI as separated tables (Volcanoes and Volcanoes Events).
+
+<img width="393" alt="DataModel" src="https://user-images.githubusercontent.com/61323876/137601096-134c4c6b-b7f8-474d-bfc2-093d83415346.png">
+
+## Dashboards
+The finished dashboards consists of visualizations and filters that give an easy option for the end users to navigate the volcanic locations and events throughout the history. Some possibilities are to filter by country, type of volcano, status, name.
+
+All the dashboards are interactive with each other so if you click on a specific dashboard all the others adjust to  focus on that information.
+
+__Click [here](https://app.powerbi.com/view?r=eyJrIjoiOTdhNzFjZGYtYTQ1ZS00MjZmLWIzNjAtOWY2OGQ0MzFlM2U3IiwidCI6IjBiZmE4NTAwLWIxZjItNDU2Ni1iYWYxLTZmNTkzNzA4OTNlNyIsImMiOjh9) to open the dashboard and try it out!__
+
+<img width="670" alt="VolcanicEvents1" src="https://user-images.githubusercontent.com/61323876/137601290-e9916f6f-c7b0-43c6-b950-b3bdd29aa5ad.png">
+
+<img width="672" alt="VolcanicEvents2" src="https://user-images.githubusercontent.com/61323876/137601294-1d2b9d65-55b9-44ae-a48a-fad5bdd697ba.png">
