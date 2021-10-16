@@ -4,7 +4,7 @@ Analysis of volcanoes events and locations from NOAA (National Oceanic and Atmos
 ![Volcano](https://user-images.githubusercontent.com/61323876/137591755-d7dd338d-7629-491c-84be-6ee701d5692a.jpg)
 
 ## Data Source
-The data is collected from NOAA (National Oceanic and Atmospheric Administration) database that can be downloaded from [here](https://www.ngdc.noaa.gov/hazel/view/hazards/volcano/event-data) to get the volcanoes events and [here](https://www.ngdc.noaa.gov/hazel/view/hazards/volcano/loc-search) to get the volcanoes locations and copied to two separated excel files.
+The data was collected from NOAA (National Oceanic and Atmospheric Administration) database that can be downloaded from [here](https://www.ngdc.noaa.gov/hazel/view/hazards/volcano/event-data) to get the volcanoes events and [here](https://www.ngdc.noaa.gov/hazel/view/hazards/volcano/loc-search) to get the volcanoes locations and copied to two separated excel files.
 
 ## Data Collection
 The necessary data was first imported into a SQL Database and afterwards transformed using the instructions that you can see below for volcanoes locations and events respectively.
