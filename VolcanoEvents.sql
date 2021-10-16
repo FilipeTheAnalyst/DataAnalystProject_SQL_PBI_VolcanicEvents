@@ -10,26 +10,22 @@ WITH CTE_VolcanoEvents as
       ,[Latitude]
       ,[Longitude]
       ,[Elevation (m)]
-      ,[Type]
+      ,Case
+			When Type like '%volcanoes' THEN REPLACE(Type, 'volcanoes', 'volcano')
+			ELSE Type
+		END AS Type
       ,[VEI] as 'Volcanic Explosivity Index (VEI)'
 	  ,Case
-			When VEI = 0 THEN 'Non-Explosive'
-			When VEI = 1 THEN 'Small'
-			When VEI = 2 THEN 'Moderate'
-			When VEI = 3 THEN 'Moderate-Large'
-			When VEI = 4 THEN 'Large'
-			When VEI >= 5 THEN 'Very Large'
-			ELSE 'Unknown'
-		END AS 'VEI General Description' -- General description for visualization purposes
-		,Case
 			When VEI = 0 THEN 'Gentle'
 			When VEI = 1 THEN 'Effusive'
-			When VEI IN (2, 3, 4) THEN 'Explosive'
-			When VEI = 5 THEN 'Cataclysmic'
-			When VEI = 6 THEN 'Paroxysmal'
-			When VEI >= 7 THEN 'Colossal'
+			When VEI = 2 THEN 'Explosive'
+			When VEI = 3 THEN 'Catastrophic'
+			When VEI = 4 THEN 'Cataclysmic'
+			When VEI = 5 THEN 'Paroxysmic'
+			When VEI = 6 THEN 'Colossal'
+			When VEI = 7 THEN 'Super-colossal'
 			ELSE 'Unknown'
-		END AS 'VEI Qualitative Description' -- Qualitative description for visualization purposes
+		END AS 'Volcanic Explosivity Index (VEI) Description' -- VEI description for visualization purposes
       ,[Agent] AS 'Agent Fatalities Code'
 	  ,Case
 			When LEN(Agent) - LEN(REPLACE(Agent, ',', '')) = 0 THEN Agent
@@ -84,9 +80,9 @@ WITH CTE_VolcanoEvents as
 	  ,Case
 			When [Damage Description] = 0 THEN '0'
 			When [Damage Description] = 1 THEN 'Less than $1 million'
-			When [Damage Description] = 2 THEN '~$1 to $5 million'
-			When [Damage Description] = 3 THEN '~$5 to $25 million'
-			When [Damage Description] = 4 THEN '~$25 million or more'
+			When [Damage Description] = 2 THEN '$1 to $5 million'
+			When [Damage Description] = 3 THEN '$5 to $25 million'
+			When [Damage Description] = 4 THEN '$25 million or more'
 			ELSE 'Unknown'
 		END AS 'Damage ($Mil) from Eruption' --Number of Damage ($Mil) from Eruption categorized for visualization purposes
       ,[Houses Destroyed]
@@ -212,4 +208,4 @@ SELECT *
 			When [Agent 4] = 'W' THEN 'Waves/Tsunami'
 			ELSE NULL
 		END AS 'Agent Fatality 4' --Agent that caused Fatalities categorized for visualization purposes
-FROM CTE_VolcanoEvents
+FROM CTE_VolcanoEvents;

@@ -20,8 +20,24 @@ SET Status = REPLACE(Status, 'Unknown', 'Uncertain')
 
 --Standardize Type values
 Update VolcanoProject.dbo.Volcanoes
-SET Type = REPLACE(Status, '?', '')
+SET Type = REPLACE(Type, '?', '')
 ;
+
+--Standardize Type Categories
+Update VolcanoProject.dbo.Volcanoes
+SET Type = 
+	(Case 
+		When Type like '%cones' THEN REPLACE(Type, 'cones', 'cone')
+		When Type like '%vents' THEN REPLACE(Type, 'vents', 'vent')
+		When Type like '%domes' THEN REPLACE(Type, 'domes', 'dome')
+		When Type like '%Maars' THEN REPLACE(Type, 'Maars', 'Maar')
+		When Type like '%volcanoes' THEN REPLACE(Type, 'volcanoes', 'volcano')
+		When Type like '%volcano(es)' THEN REPLACE(Type, 'volcano(es)', 'volcano')
+	ELSE Type
+	END)
+FROM VolcanoProject.dbo.Volcanoes
+;
+
 
 --Standardize Last Known Eruption values
 Update VolcanoProject.dbo.Volcanoes
