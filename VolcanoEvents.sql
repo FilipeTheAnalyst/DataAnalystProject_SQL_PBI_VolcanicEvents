@@ -1,7 +1,6 @@
-/****** Script for SelectTopNRows command from SSMS  ******/
 WITH CTE_VolcanoEvents as
 (SELECT 
-		[Year]
+	   [Year]
       ,[Month]
       ,[Day]
       ,[Name]
